@@ -3,66 +3,48 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-//todo 1969 DNA
+//todo 9012 DNA
 public class Main {
 
-    static class Alphabet implements Comparable<Alphabet>{
-        int alpha;
-        int cnt;
+    static int N;
 
 
-        public Alphabet(int alpha, int cnt) {
-            this.alpha = alpha;
-            this.cnt = cnt;
-        }
 
-        @Override
-        public int compareTo(Alphabet o) {
-            if (this.cnt == o.cnt) {
-                return this.alpha - o.alpha;
-            }
-            return o.cnt - this.cnt;
-        }
-    }
 
-    static Alphabet[][] alphabets;
-    static int sum = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int N = Integer.parseInt(st.nextToken());
-        int M = Integer.parseInt(st.nextToken());
-        alphabets = new Alphabet[M][26];
+        N = Integer.parseInt(br.readLine());
 
-
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < 26; j++) {
-                alphabets[i][j] = new Alphabet(j + 65, 0);
-            }
-        }
-
-        for (int i = 0; i < N; i++) {
+        for (int t = 0; t < N; t++) {
             String s = br.readLine();
-            for (int j = 0; j < M; j++) {
-                char c = s.charAt(j);
-                alphabets[j][c - 65].cnt++;
+            int num = s.length();
+            if (run(num, s)) {
+                System.out.println("YES");
+            } else {
+                System.out.println("NO");
             }
         }
-
-        for (int i = 0; i < M; i++) {
-            Arrays.sort(alphabets[i]);
-            sum += N - alphabets[i][0].cnt;
-            System.out.print((char) alphabets[i][0].alpha);
-        }
-        System.out.println();
-
-        System.out.println(sum);
-
-
-
 
     }
 
+    static boolean run(int num, String s) {
+            Stack<Character> stack = new Stack<>();
+            for (int i = 0; i < num; i++) {
+                char c = s.charAt(i);
 
-}
+                if (c == '(') {
+                    stack.push('(');
+                    continue;
+                }
+
+                if (stack.isEmpty()) {
+                    return false;
+                }
+
+                stack.pop();
+            }
+            return stack.isEmpty();
+        }
+    }
+
