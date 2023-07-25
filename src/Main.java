@@ -7,69 +7,35 @@ import java.util.*;
 //todo 추월
 public class Main {
 
-    static int N;
 
-    static int result = 0;
-
-    static class Before {
-        public String front;
-
-        public boolean isOk;
-
-        public Before(String s, boolean isOk) {
-            this.front = s;
-            this.isOk = isOk;
-        }
-    }
-
-
-    static HashMap<String, Before> before = new HashMap<>();
-    static List<String> afterList = new ArrayList<>();
-    static HashMap<String, Integer> after = new HashMap<>();
-
-
-
+    static int[] rc = new int[4];
+    static int num;
+    static int max;
 
 
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
+        Scanner sc = new Scanner(System.in);
 
-        String first = br.readLine();
-        before.put(first, new Before(first, true));
-        String front = first;
-        for (int i = 1; i < N; i++) {
-            String s = br.readLine();
-            before.put(s, new Before(front, false));
-            front = s;
+        for (int i = 0; i < 4; i++) {
+            rc[i] = sc.nextInt();
         }
-
-        for (int i = 0; i < N; i++) {
-            String s = br.readLine();
-            afterList.add(i, s);
-            after.put(s, i);
-        }
-
-
-        for (String s : afterList) {
-            String ss = s;
-            while (true) {
-                Before b = before.get(ss);
-                Before bb = before.get(b.front);
-                if (after.get(s) < after.get(b.front)) {
-                    result++;
-                    break;
-                }
-                if (bb.isOk) {
-                    b.isOk = true;
-                    break;
-                }
-                ss = b.front;
-
+        num = 0;
+        max = Math.abs(rc[0]);
+        for (int i = 1; i < 3; i++) {
+            if (max <= Math.abs(rc[i])) {
+                max = Math.abs(rc[i]);
+                num = i;
             }
         }
+        if (max < Math.abs(rc[3])) {
+            max = Math.abs(rc[3]);
+            num = 3;
+        }
 
-        System.out.println(result);
+        int one = max * 2 + 1;
+        int maxNum = one * one;
+
+
 
     }
 }
