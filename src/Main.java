@@ -8,35 +8,50 @@ import java.util.*;
 public class Main {
 
 
-    static int[] rc = new int[4];
-    static int num;
-    static int max;
+    static int[] triNum;
 
 
     public static void main(String[] args) throws IOException {
         Scanner sc = new Scanner(System.in);
+        int test = sc.nextInt();
 
-        for (int i = 0; i < 4; i++) {
-            rc[i] = sc.nextInt();
+        for (int t = 0; t < test; t++) {
+            int n = sc.nextInt();
+
+            System.out.println(init(n));
         }
-        num = 0;
-        max = Math.abs(rc[0]);
-        for (int i = 1; i < 3; i++) {
-            if (max <= Math.abs(rc[i])) {
-                max = Math.abs(rc[i]);
-                num = i;
+
+
+
+
+
+
+    }
+
+    static int init(int n) {
+        for (int i = 1; i < 100; i++) {
+            int check1 = (i*(i+1)) / 2;
+            if (check1 > 1000) {
+                break;
+            }
+            for (int j = 1; j < 100; j++) {
+                int check2 = (i*(i+1)) / 2;
+                if (check2 > 1000) {
+                    break;
+                }
+                for (int k = 1; k < 100; k++) {
+                    int check3 = (i*(i+1)) / 2;
+                    if (check3 > 1000) {
+                        break;
+                    }
+                    int tri = ((i * (i + 1)) / 2) + ((j * (j + 1)) / 2) + ((k * (k + 1)) / 2);
+                    if (tri == n) {
+                        return 1;
+                    }
+                }
             }
         }
-        if (max < Math.abs(rc[3])) {
-            max = Math.abs(rc[3]);
-            num = 3;
-        }
-
-        int one = max * 2 + 1;
-        int maxNum = one * one;
-
-
-
+        return 0;
     }
 }
 
