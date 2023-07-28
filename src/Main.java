@@ -16,11 +16,26 @@ public class Main {
     static int[] yy = {0, 0, -1, 1};
     static int[] xx = {-1, 1, 0, 0};
 
-    static List<int[]> virus = new ArrayList<>();
+    static List<Virus> virus = new ArrayList<>();
 
     static boolean[] actVirus;
 
     static int min = Integer.MAX_VALUE;
+
+    static int zero =0;
+
+    static class Virus {
+        int y;
+        int x;
+        int time;
+
+        public Virus(int y, int x, int time) {
+            this.y = y;
+            this.x = x;
+            this.time = time;
+        }
+    }
+
 
 
     public static void main(String[] args) throws IOException {
@@ -37,7 +52,11 @@ public class Main {
             for (int j = 0; j < N; j++) {
                 map[i][j] = Integer.parseInt(st.nextToken());
                 if (map[i][j] == 2) {
-                    virus.add(new int[]{i, j});
+                    virus.add(new Virus(i, j, 0));
+                    continue;
+                }
+                if (map[i][j] == 0) {
+                    zero++;
                 }
             }
         }
@@ -55,77 +74,69 @@ public class Main {
 
     static void backTracking(int depth, int start) {
         if (depth == M) {
-            List<int[]> list = new ArrayList<>();
-            for (int i = 0; i < virus.size(); i++) {
-                if (actVirus[i]) {
-                    list.add(virus.get(i));
+            min = Math.min(bfs(), min);
+        } else {
+            for (int i = start; i < virus.size(); i++) {
+                if (!actVirus[i]) {
+                    actVirus[i] = true;
+                    backTracking(depth + 1, i + 1);
+                    actVirus[i] = false;
+
                 }
+
+
             }
-            if (list.size() >= M) {
-                min = Math.min(bfs(list), min);
-            }
-            return;
         }
 
-        for (int i = start; i < virus.size(); i++) {
-            int[] v = virus.get(i);
-            actVirus[i] = true;
-            backTracking(depth + 1, start + 1);
-            actVirus[i] = false;
-        }
+
     }
 
-    static int bfs(List<int[]> startVirus) {
-        int[][] board = new int[N][N];
-        for (int i = 0; i < N; i++) {
-            System.arraycopy(map[i], 0, board[i], 0, N);
-        }
-        Queue<int[]> que = new LinkedList<>();
-        for (int[] v : startVirus) {
-            board[v[0]][v[1]] = 3;
-            que.add(new int[]{v[0], v[1]});
+    static int bfs() {
+
+        Queue<Virus> que = new LinkedList<>();
+        boolean[][] isChecked = new boolean[N][N];
+        for (int i = 0; i < virus.size(); i++) {
+            if (actVirus[i]) {
+                Virus v = virus.get(i);
+                que.add(new Virus(v.y, v.x, 0));
+            }
         }
 
-
-        int max = 3;
+        int max = 0;
+        int count = 0;
         while (!que.isEmpty()) {
-            int[] now = que.poll();
+            Virus now = que.poll();
 
             for (int i = 0; i < 4; i++) {
-                int dy = now[0] + yy[i];
-                int dx = now[1] + xx[i];
+                int dy = now.y + yy[i];
+                int dx = now.x + xx[i];
 
                 if (dy < 0 || dx < 0 || dy >= N || dx >= N) {
                     continue;
                 }
 
-                if (board[dy][dx] == 1) {
+                if (map[dy][dx] == 1 || isChecked[dy][dx]) {
                     continue;
                 }
 
-                if (board[dy][dx] == 0) {
-                    board[dy][dx] = board[now[0]][now[1]] + 1;
-                    max = board[dy][dx];
-                    que.add(new int[]{dy, dx});
+                if (!isChecked[dy][dx] && map[dy][dx] != 1) {
+                    if (map[dy][dx] == 0) {
+                        count++;
+                        max = now.time + 1;
+                    }
+                    isChecked[dy][dx] = true;
+                    que.add(new Virus(dy, dx, now.time + 1));
                 }
 
-                if (board[dy][dx] == 2) {
-                    board[dy][dx] = board[now[0]][now[1]];
-                    que.add(new int[]{dy, dx});
-                }
             }
         }
 
-
-
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if (board[i][j] == 0) {
-                    return Integer.MAX_VALUE;
-                }
-            }
+        if (zero == count) {
+            return max;
         }
-        return max - 3;
+
+
+        return Integer.MAX_VALUE;
     }
 
 
