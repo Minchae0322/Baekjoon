@@ -6,43 +6,28 @@ import java.net.Inet4Address;
 import java.util.*;
 import java.util.function.IntPredicate;
 
-//todo 1343 폴리오미노
+//todo 18310 안테나
 public class Main {
 
 
 
 
-
+    static int N;
+    static int[] value;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String s = br.readLine();
-        StringBuilder result = new StringBuilder();
-        String[] ss = s.split("\\.");
+        N = Integer.parseInt(br.readLine());
+        value = new int[N];
 
-        for (int i = 0; i < ss.length; i++) {
-            if (ss[i].length() % 2 == 1) {
-                System.out.println(-1);
-                return;
-            }
-            if (ss[i].length() == 4) {
-                result.append("AAAA");
-            } else {
-                result.append("BB");
-            }
-            result.append(".");
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
+            value[i] = Integer.parseInt(st.nextToken());
         }
 
-        if (s.charAt(0) == '.') {
-            System.out.println("." + result);
-        } else {
-            System.out.println(result);
-        }
+        Arrays.sort(value);
 
-
-
-
-
+        System.out.println(value[(N-1)/2]);
 
     }
 
