@@ -1,64 +1,54 @@
-import java.beans.Introspector;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Inet4Address;
 import java.util.*;
-import java.util.function.IntPredicate;
 
-//todo 16935 2467번 용액
+//todo 게임 1072번
 public class Main {
 
-    static int N;
+    static long X;
+    static long Y;
 
-    static long[] value;
+    static long end;
+
 
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        Scanner sc = new Scanner(System.in);
+        X = sc.nextLong();
+        Y = sc.nextLong();
 
-        value = new long[N];
+        end = Math.min(X * 2, 1000000000);
 
-        for (int i = 0; i < N; i++) {
-            value[i] = Long.parseLong(st.nextToken());
-        }
+        long start = 0;
+        long min = Integer.MAX_VALUE;
 
-        run(0, N - 1);
+        double initRate = calRate(0);
 
-    }
+        while (start <= end) {
+            long middle = (start + end) / 2;
+            double rate = calRate(middle);
 
-
-        static void run(int start , int end) {
-        long min = Long.MAX_VALUE;
-        long sv = value[start];
-        long ev = value[end];
-
-        while (start < end) {
-            long sum = (value[start] + value[end]);
-
-            if (Math.abs(sum) < min) {
-                min = Math.abs(sum);
-                sv = value[start];
-                ev = value[end];
-            }
-            if (sum == 0) {
-                System.out.println(sv + " " + ev);
-                return;
-            }
-            if (sum > 0) {
-                end--;
+            if (initRate < rate) {
+                min = Math.min(min, middle);
+                end = middle - 1;
             } else {
-                start++;
+                start = middle + 1;
             }
         }
 
-        System.out.println(sv + " " + ev);
+        if (min == Integer.MAX_VALUE) {
+            System.out.println(-1);
+            return;
+        }
+        System.out.println(min);
+
+
+
+
     }
 
 
-
-
+    static double calRate(long num) {
+        return Math.floor((((num + Y)  * 100) / (X + num)));
+    }
 
 
 }
