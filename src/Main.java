@@ -1,54 +1,70 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
-//todo 게임 1072번
+//todo 기타 레슨 2343
 public class Main {
 
-    static long X;
-    static long Y;
+    static int N;
+    static int M;
 
-    static long end;
+    static int[] value;
 
 
     public static void main(String[] args) throws IOException {
-        Scanner sc = new Scanner(System.in);
-        X = sc.nextLong();
-        Y = sc.nextLong();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        value = new int[N];
 
-        end = Math.min(X * 2, 1000000000);
+        st = new StringTokenizer(br.readLine());
+        int min = 0;
+        int max = 0;
 
-        long start = 0;
-        long min = Integer.MAX_VALUE;
+        for (int i = 0; i < N; i++) {
+            value[i] = Integer.parseInt(st.nextToken());
+            min = Math.max(min, value[i]);
+            max += value[i];
+        }
 
-        double initRate = calRate(0);
+        int start = min;
+        int end = max;
 
         while (start <= end) {
-            long middle = (start + end) / 2;
-            double rate = calRate(middle);
+            int middle = (start + end) / 2;
+            int blueRay = divide(middle);
 
-            if (initRate < rate) {
-                min = Math.min(min, middle);
+            if (blueRay <= M) {
                 end = middle - 1;
             } else {
                 start = middle + 1;
             }
         }
 
-        if (min == Integer.MAX_VALUE) {
-            System.out.println(-1);
-            return;
+        System.out.println(start);
+
+
+    }
+
+    static int divide(int num) {
+        int blueRayNum = 0;
+        int blueRayVol = 0;
+        for (int i = 0; i < N; i++) {
+            if (blueRayVol + value[i] > num) {
+                blueRayNum++;
+                blueRayVol = 0;
+            }
+            blueRayVol += value[i];
+
         }
-        System.out.println(min);
-
-
-
-
+        if (blueRayVol == 0) {
+            return blueRayNum;
+        }
+        return blueRayNum + 1;
     }
 
-
-    static double calRate(long num) {
-        return Math.floor((((num + Y)  * 100) / (X + num)));
-    }
 
 
 }
