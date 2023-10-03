@@ -41,67 +41,104 @@ public class Main {
                     Z = new int[]{i, j};
                 }
                 if (c != 'M' && c != '.') {
-                    block++;
+                    if (c == '+') {
+                        block += 2;
+                    } else {
+                        block++;
+                    }
+
                 }
                 board[i][j] = c;
             }
         }
 
 
-        run(findStart(M[0], M[1]));
+        run();
 
     }
 
-    static void run(int[] first) {
-        int dy = first[0];
-        int dx = first[1];
-        int dir = first[2];
+    static void run() {
+        int dy = M[0];
+        int dx = M[1];
+        int dir = startDirection();
+
         while (canFlow(dy, dx, dir)) {
             dy = dy + yy[dir];
             dx = dx + xx[dir];
             dir = getDir(dy, dx, dir);
-
         }
         makeBlock(dy, dx, dir);
+    }
+
+    static boolean run2(int blockNum) {
+        int dy = M[0];
+        int dx = M[1];
+        int dir = startDirection();
+
+        while (canFlow(dy, dx, dir)) {
+            dy = dy + yy[dir];
+            dx = dx + xx[dir];
+            dir = getDir(dy, dx, dir);
+            blockNum--;
+            if ((dy == Z[0] && dx == Z[1])) {
+                break;
+
+            }
+
+        };
+        return blockNum == 0;
     }
 
     static void makeBlock(int y, int x, int dir) {
         int blockY = y + yy[dir];
         int blockX = x + xx[dir];
 
-        System.out.println(blockY + " " + blockX);
 
         board[blockY][blockX] = '|';
-        if (run2(findStart(M[0], M[1]), block)) {
-            System.out.println(blockY + " " + blockX + '|');
+        if (run2(block + 1)) {
+            blockY++;
+            blockX++;
+            System.out.println(blockY + " " + blockX + " " + '|');
             return;
         }
         board[blockY][blockX] = '-';
-        if (run2(findStart(M[0], M[1]), block)) {
-            System.out.println(blockY + blockX + '-');
+        if (run2( block + 1)) {
+            blockY++;
+            blockX++;
+            System.out.println(blockY + " " + blockX + " " + '-');
             return;
         }
         board[blockY][blockX] = '+';
-        if (run2(findStart(M[0], M[1]), block)) {
-            System.out.println(blockY + blockX + '+');
+        if (run2(block + 1)) {
+            blockY++;
+            blockX++;
+            System.out.println(blockY + " " + blockX + " " + '+');
             return;
         }
         board[blockY][blockX] = '1';
-        if (run2(findStart(M[0], M[1]), block)) {
-            System.out.println(blockY + blockX + '1');
+        if (run2(block + 1)) {
+            blockY++;
+            blockX++;
+            System.out.println(blockY + " " + blockX + " " + '1');
             return;
         }
         board[blockY][blockX] = '2';
-        if (run2(findStart(M[0], M[1]), block)) {
-            System.out.println(blockY + blockX + '2');
+        if (run2(block + 1)) {
+            blockY++;
+            blockX++;
+            System.out.println(blockY + " " + blockX + " " + '2');
             return;
         }board[blockY][blockX] = '3';
-        if (run2(findStart(M[0], M[1]), block)) {
-            System.out.println(blockY + blockX + '3');
+        if (run2(block + 1)) {
+            blockY++;
+            blockX++;
+            System.out.println(blockY + " " + blockX + " " + '3');
             return;
         }board[blockY][blockX] = '4';
-        if (run2(findStart(M[0], M[1]), block)) {
-            System.out.println(blockY + blockX + '4');
+        if (run2(block + 1)) {
+            blockY++;
+            blockX++;
+            System.out.println(blockY + " " + blockX + " " + '4');
             return;
         }
 
@@ -110,26 +147,9 @@ public class Main {
 
     }
 
-    static boolean run2(int[] first, int blockNum) {
-        int dy = first[0];
-        int dx = first[1];
-        int dir = first[2];
-        while (canFlow(dy, dx, dir)) {
-            dy = dy + yy[dir];
-            dx = dx + xx[dir];
-            dir = getDir(dy, dx, dir);
-            blockNum--;
-        }
 
-        if (blockNum == block - 1) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     static int getDir(int y, int x, int dir) {
-
         switch (board[y][x]) {
             case '-':
             case '|':
@@ -156,7 +176,7 @@ public class Main {
                     return 2;
                 }
             case '4':
-                if (dir == 0) {
+                if (dir == 1) {
                     return 3;
                 } else {
                     return 0;
@@ -165,85 +185,27 @@ public class Main {
 
         return dir;
     }
-    /*static int getDir(int y, int x, int dir) {
-        int dy = 0;
-        int dx = 0;
-        System.out.println(board[y][x]);
-        switch (board[y][x]) {
-            case '-':
-            case '|':
-            case '+':
-                dy = y + yy[dir];
-                dx = x + xx[dir];
 
-                return new int[]{dy, dx, dir};
-            case '1':
-                if (dir == 0) {
-                    dy = y + yy[3];
-                    dx = x + xx[3];
-                    return new int[]{dy, dx, 3};
-                } else {
-                    dy = y + yy[1];
-                    dx = x + xx[1];
-                    return new int[]{dy, dx, 1};
-                }
 
-            case '2':
-                if (dir == 3) {
-                    dy = y + yy[1];
-                    dx = x + xx[1];
-                    return new int[]{dy, dx, 1};
-                } else {
-                    dy = y + yy[2];
-                    dx = x + xx[2];
-                    return new int[]{dy, dx, 2};
-                }
-
-            case '3':
-                if (dir == 3) {
-                    dy = y + yy[0];
-                    dx = x + xx[0];
-                    return new int[]{dy, dx, 0};
-                } else {
-                    dy = y + yy[2];
-                    dx = x + xx[2];
-                    return new int[]{dy, dx, 2};
-                }
-            case '4':
-                if (dir == 0) {
-                    dy = y + yy[3];
-                    dx = x + xx[3];
-                    return new int[]{dy, dx, 3};
-                } else {
-                    dy = y + yy[0];
-                    dx = x + xx[0];
-                    return new int[]{dy, dx, 0};
-                }
-        }
-
-        return null;
-    }*/
-
-    static int[] findStart(int y, int x) {
+    static int startDirection() {
         for (int i = 0; i < 4; i++) {
-            int dy = y + yy[i];
-            int dx = x + xx[i];
+            int dy = M[0] + yy[i];
+            int dx = M[1] + xx[i];
 
             if (dy < 0 || dx < 0 || dy >= R || dx >= C) {
                 continue;
             }
 
-            if (board[dy][dx] != '.') {
-                return new int[]{dy, dx, i};
+            if (board[dy][dx] != '.' && board[dy][dx] != 'Z') {
+                return i;
             }
         }
-        return new int[]{0, 0, 0};
+        return 0;
     }
 
     static boolean canFlow(int y, int x, int direction) {
         int dy = y + yy[direction];
         int dx = x + xx[direction];
-        char block = board[y][x];
 
         if (dy < 0 || dx < 0 || dy >= R || dx >= C) {
             return false;
@@ -251,6 +213,30 @@ public class Main {
 
         if (board[dy][dx] == '.' || board[dy][dx] == 'M') {
             return false;
+        }
+
+        if (board[dy][dx] == '|') {
+            return direction != 0 && direction != 1;
+        }
+
+        if (board[dy][dx] == '-') {
+            return direction != 2 && direction != 3;
+        }
+
+        if (board[dy][dx] == '1') {
+            return direction != 1 && direction != 3;
+        }
+
+        if (board[dy][dx] == '2') {
+            return direction != 1 && direction != 2;
+        }
+
+        if (board[dy][dx] == '3') {
+            return direction != 0 && direction != 2;
+        }
+
+        if (board[dy][dx] == '4') {
+            return direction != 0 && direction != 3;
         }
 
         return true;
