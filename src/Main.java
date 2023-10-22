@@ -1,71 +1,101 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
-//todo 지구온난화
-public class Main {
+class Main {
+    static List<Section> sections = new ArrayList<>();
 
-    static int[][] map;
-    static int R;
-    static int C;
 
-    static int N;
+    static class Section implements Comparator<Section>{
+        int section;
+        int stoneValue;
+        List<String> mineralsList;
 
-    static int[] yy = {0, 0, -1, 1};
-    static int[] xx = {-1, 1, 0, 0};
-
-    static char[][] board;
-
-    static int[] M = new int[2];
-    static int[] Z = new int[2];
-
-    static int block = 0;
-
-    public static void main(String[] args) throws IOException {
-        Scanner sc = new Scanner(System.in);
-        map = new int[7][2];
-
-        for (int i = 0; i < 7; i++) {
-            map[i][0] = sc.nextInt();
-            map[i][1] = sc.nextInt();
+        public Section(int section, int stoneValue, List<String> mineralsList) {
+            this.section = section;
+            this.stoneValue = stoneValue;
+            this.mineralsList = mineralsList;
         }
 
-        System.out.println(solution(map));
-
+        @Override
+        public int compare(Section o1, Section o2) {
+            return o2.stoneValue - o1.stoneValue;
+        }
 
     }
 
-    static int solution(int[][] targets) {
+    public int solution(int[] picks, String[] minerals) {
         int answer = 0;
-        sort(targets);
-        for (int i = 0; i < 7; i++) {
-            System.out.println(targets[i][0] + " " + targets[i][1]);
+        int allSection = minerals.length / 5 + 1;
+        int picksNum = 0;
+
+        picksNum += picks[0] + picks[1] + picks[2];
+        int findSection = allSection > picksNum ? picksNum : allSection;
+
+        for(int section = 0; section < findSection; section++) {
+            List<String> oneSection = new ArrayList<>();
+            for(int i=0; i<5; i++) {
+                int index = section * 5 + i;
+                if(section * 5 + i >= minerals.length) {
+                    break;
+                }
+                oneSection.add(minerals[index]);
+            }
+            int stoneValue = stonePick(oneSection);
+            sections.add(new Section(section, stoneValue, oneSection));
         }
-        answer = run(targets);
+        Collections.sort(sections, (a, b) -> b.stoneValue - a.stoneValue);
+
+        for(Section s : sections) {
+            if(picks[0] > 0) {
+                picks[0]--;
+                answer += diamondPick(s.mineralsList);
+                continue;
+            }
+            if(picks[1] > 0) {
+                picks[1]--;
+                answer += ironPick(s.mineralsList);
+                continue;
+            }
+            if(picks[2] > 0) {
+                picks[2]--;
+                answer += s.stoneValue;
+            }
+        }
+
+
         return answer;
     }
 
-    static void sort(int[][] targets) {
-        Arrays.sort(targets, Comparator.comparingInt(o -> o[1]));
+
+
+    static int diamondPick(List<String> minerals) {
+        return minerals.size();
     }
 
-    static int run(int[][] sorted) {
-        int num = 0;
-        int firstNum = sorted[0][1];
-        for(int i=1; i<sorted.length; i++) {
-            if(firstNum < sorted[i][0]) {
+    static int ironPick(List<String> minerals) {
+        int sum = 0;
+        for(String mineral : minerals) {
+            if(mineral.equals("diamond")) {
+                sum += 5;
                 continue;
             }
-            num++;
-            firstNum = sorted[i][1];
+            sum += 1;
         }
-
-        return num;
+        return sum;
     }
 
-
-
+    static int stonePick(List<String> minerals) {
+        int sum = 0;
+        for(String mineral : minerals) {
+            if(mineral.equals("diamond")) {
+                sum += 25;
+                continue;
+            }
+            if(mineral.equals("iron")) {
+                sum += 5;
+                continue;
+            }
+            sum += 1;
+        }
+        return sum;
+    }
 }
-
-
