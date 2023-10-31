@@ -1,47 +1,41 @@
 import java.util.*;
 
 class Solution {
+    static int[] sequencePlus;
+    static int[] sequenceMinus;
+    static int sequenceLength;
+    static long max = -100001;
 
-    static class Store {
-        int start;
-        int end;
-        int length;
+    public long solution(int[] sequence) {
+        sequenceLength = sequence.length;
+        sequencePlus = new int[sequenceLength];
+        sequenceMinus = new int[sequenceLength];
+        getSequencePulse(sequence);
+        getMaxSum(sequencePlus);
+        getMaxSum(sequenceMinus);
+        return max;
+    }
 
-        public Store(int start, int end) {
-            this.start = start;
-            this.end = end;
-            this.length = end - start;
+    static void getSequencePulse(int[] sequence) {
+        for(int i=0; i<sequenceLength; i++) {
+            if(i % 2 == 0) {
+                sequencePlus[i] = sequence[i];
+                sequenceMinus[i] = -sequence[i];
+            } else {
+                sequenceMinus[i] = sequence[i];
+                sequencePlus[i] = -sequence[i];
+            }
         }
     }
 
-    static int dp[];
-    static List<Store> list = new ArrayList<>();
-
-    public int[] solution(int[] sequence, int k) {
-        int[] answer = {};
-        dp = new int[sequence.length];
-        for(int i=0; i<sequence.length; i++) {
-            for(int j=0; j<=i; j++) {
-                dp[j] = dp[j] + sequence[i];
-                if(dp[j] == k) {
-                    list.add(new Store(j, i));
-                }
+    static void getMaxSum(int[] sequence) {
+        long sum = 0;
+        for(int i=0; i<sequenceLength; i++) {
+            sum += sequence[i];
+            max = Math.max(max, sum);
+            if(sum < 0) {
+                sum = 0;
             }
         }
-
-        Collections.sort(list, (o1, o2) -> {
-            if(o1.length == o2.length) {
-                return o1.start - o2.start;
-            }
-            return o1.length - o2.length;
-        });
-
-        Store s = list.get(0);
-        int index = 0;
-        answer = new int[2];
-        answer[0] = s.start;
-        answer[1] = s.end;
-
-        return answer;
     }
 }
