@@ -1,42 +1,55 @@
 import java.util.*;
 
 class Solution {
-    static int[] alphabat = new int[26];
-    static int[] result;
-    public int[] solution(String[] keymap, String[] targets) {
-        int[] answer = {};
-        result = new int[targets.length];
-        Arrays.fill(alphabat, Integer.MAX_VALUE);
-        makeNumber(keymap);
-        return solve(targets);
+    static class Schedule implements Comparable<Schedule>{
+        int start;
+        int end;
 
+        public Schedule(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
 
+        @Override
+        public int compareTo(Schedule o) {
+            return this.end - o.end;
+        }
     }
 
-    static int[] solve(String[] targets) {
-        for(int i=0; i<targets.length; i++) {
-            int sum = 0;
-            String s = targets[i];
-            for(int j=0; j<s.length(); j++) {
-                char c = s.charAt(j);
-                if(alphabat[c - 65] == Integer.MAX_VALUE) {
-                    result[i] = -1;
-                    break;
-                }
-                sum += alphabat[c - 65];
-            }
-            result[i] = sum;
+    static Queue<Schedule> que = new PriorityQueue<>();
+    static List<Schedule> list = new ArrayList<>();
+    static int maxRoom = 0;
+
+    public int solution(String[][] book_time) {
+        int answer = 0;
+        for(int i=0; i<book_time.length; i++) {
+            int start = timeToMinute(book_time[i][0]);
+            int end = timeToMinute(book_time[i][1]);
+            list.add(new Schedule(start, end));
         }
-        return result;
+        list.sort(((o1, o2) -> o1.start - o2.start));
+
+        for(Schedule s : list) {
+            if(que.isEmpty()) {
+                que.add(s);
+                maxRoom = Math.max(maxRoom, que.size());
+                continue;
+            }
+            Schedule now = que.poll();
+            if(now.end + 10 > s.start) {
+                que.add(now);
+            }
+            que.add(s);
+            maxRoom = Math.max(maxRoom, que.size());
+        }
+
+        return maxRoom;
     }
 
-    static void makeNumber(String[] keymap) {
-        for(int i=0; i<keymap.length; i++) {
-            String s = keymap[i];
-            for(int j=0; j<s.length(); j++) {
-                char c = s.charAt(j);
-                alphabat[c - 65] = Math.min(j + 1, alphabat[c - 65]);
-            }
-        }
+
+    static int timeToMinute(String s) {
+        int hour = Integer.parseInt(s.substring(0, 2));
+        int minute = Integer.parseInt(s.substring(3));
+        return hour * 60 + minute;
     }
 }
