@@ -1,55 +1,63 @@
 import java.util.*;
 
 class Solution {
-    static class Schedule implements Comparable<Schedule>{
-        int start;
-        int end;
+    static int[] yy = {0, 0, -1, 1};
+    static int[] xx = {-1, 1, 0, 0};
+    static boolean[][] isChecked;
+    static int yLength;
+    static int xLength;
 
-        public Schedule(int start, int end) {
-            this.start = start;
-            this.end = end;
-        }
+    public int[] solution(String[] maps) {
+        int[] answer = {};
+        yLength = maps.length;
+        xLength = maps[0].length();
+        List<Integer> list = new ArrayList<>();
+        isChecked = new boolean[maps.length][maps[0].length()];
 
-        @Override
-        public int compareTo(Schedule o) {
-            return this.end - o.end;
+        for(int i=0; i<maps.length; i++) {
+            for(int j=0; j<maps[i].length(); j++) {
+                if(!isChecked[i][j] && maps[i].charAt(j) != 'X') {
+                    list.add(bfs(i, j, maps));
+
+                }
+            }
         }
+        Collections.sort(list);
+        if(list.size() == 0) {
+            return new int[]{-1};
+        }
+        answer = new int[list.size()];
+        for(int i=0; i<list.size(); i++) {
+            answer[i] = list.get(i);
+        }
+        return answer;
     }
 
-    static Queue<Schedule> que = new PriorityQueue<>();
-    static List<Schedule> list = new ArrayList<>();
-    static int maxRoom = 0;
+    static int bfs(int y, int x, String[] maps) {
+        Queue<int[]> que = new LinkedList<>();
+        que.add(new int[] {y, x});
+        isChecked[y][x] = true;
+        int sum = Character.getNumericValue(maps[y].charAt(x));;
 
-    public int solution(String[][] book_time) {
-        int answer = 0;
-        for(int i=0; i<book_time.length; i++) {
-            int start = timeToMinute(book_time[i][0]);
-            int end = timeToMinute(book_time[i][1]);
-            list.add(new Schedule(start, end));
-        }
-        list.sort(((o1, o2) -> o1.start - o2.start));
+        while(!que.isEmpty()) {
+            int[] now = que.poll();
 
-        for(Schedule s : list) {
-            if(que.isEmpty()) {
-                que.add(s);
-                maxRoom = Math.max(maxRoom, que.size());
-                continue;
+            for(int i=0; i<4; i++) {
+                int dy = now[0] + yy[i];
+                int dx = now[1] + xx[i];
+
+                if(dy < 0 || dx < 0 || dy >= yLength || dx >= xLength) {
+                    continue;
+                }
+
+                if(isChecked[dy][dx] || maps[dy].charAt(dx) == 'X') {
+                    continue;
+                }
+                que.add(new int[] {dy, dx});
+                sum += Character.getNumericValue(maps[dy].charAt(dx));
+                isChecked[dy][dx] = true;
             }
-            Schedule now = que.poll();
-            if(now.end + 10 > s.start) {
-                que.add(now);
-            }
-            que.add(s);
-            maxRoom = Math.max(maxRoom, que.size());
         }
-
-        return maxRoom;
-    }
-
-
-    static int timeToMinute(String s) {
-        int hour = Integer.parseInt(s.substring(0, 2));
-        int minute = Integer.parseInt(s.substring(3));
-        return hour * 60 + minute;
+        return sum;
     }
 }
