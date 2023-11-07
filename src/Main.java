@@ -8,7 +8,7 @@ class Solution {
     static int xLength;
 
     public int[] solution(String[] maps) {
-        int[] answer = {};
+        int[] answer = {};D
         yLength = maps.length;
         xLength = maps[0].length();
         List<Integer> list = new ArrayList<>();
